@@ -1,0 +1,88 @@
+Hey, I can't connect to firebase, after any kind of commands (setInt, setFloat, getString ...), firebase.failed() method always returns true with an empty error. Here is what i tried to do:
+
+I'm using a NodeMCU v3
+
+Firebase database settings:
+{ "rules": { ".read": true, ".write": true } }
+
+Version of Firebase Arduino Library: 0.3
+
+Version of ArduinoJson: 5.13.1
+
+Double checked Firebase_Host, Firebase_Auth, Wifi_SSID, Wifi_PASSWORD
+
+Here is my code:
+
+#include <Firebase.h>
+#include <FirebaseArduino.h>
+#include <FirebaseCloudMessaging.h>
+#include <FirebaseError.h>
+#include <FirebaseHttpClient.h>
+#include <FirebaseObject.h>
+
+#include <ArduinoJson.h>
+#include <ESP8266WiFi.h>
+#include <String.h>
+
+//VARIABILI FIREBASE
+#define FIREBASE_HOST "myproj.firebaseio.com/"
+#define FIREBASE_AUTH "xxxx"
+
+//VARIABILI ESP8266
+#define WIFI_SSID "wifi"
+#define WIFI_PASSWORD "password"
+
+String passcode = "";
+void setup()
+{
+Serial.begin(9600);
+WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+while (WiFi.status() != WL_CONNECTED)
+{
+Serial.print(".");
+delay(500);
+}
+Serial.print("\nconnected: ");
+Serial.println(WiFi.localIP());
+
+//////////////////////////////////
+Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+delay(500);
+}
+
+void loop()
+{
+passcode = Firebase.getString("user1");
+if (Firebase.failed())
+{
+Serial.println("errore>>");
+Serial.println(Firebase.error());
+Serial.print(";;"+passcode);
+Serial.println("<<");
+}
+
+if(Firebase.success())
+{
+Serial.print("\nserver = "+passcode);
+Serial.print("\n###############");
+}
+
+delay(2500);
+}
+
+
+####Update1###
+Solved, here is what you have to do:
+1 - Close Arduino IDE
+2 - Copy firebase host url and generate your own fingerprint here - https://www.grc.com/fingerprints.htm
+3 - Copy your own fingeprint (it should be like this XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX ) and copy it in FirebaseHttpClient.h file.
+4 - you will have something like this:
+... other code ...
+static const char kFirebaseFingerprint[] = "XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX";
+
+N.B. do not delete colon (:), just paste the fingerprint
+
+
+####Update2###
+same issue and the fingerprint work for me, but for clarification.
+use the same firebase host url you use in arduino code.
