@@ -11,7 +11,10 @@ Version of ArduinoJson: 5.13.1
 
 Double checked Firebase_Host, Firebase_Auth, Wifi_SSID, Wifi_PASSWORD
 
-Here is my code:
+
+
+
+#########Here is my code:##############
 
 #include <Firebase.h>
 #include <FirebaseArduino.h>
